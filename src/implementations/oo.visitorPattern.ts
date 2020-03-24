@@ -68,11 +68,7 @@ export class PaidOrder implements IOrder {
 }
 
 export class CompletedOrder implements IOrder {
-  constructor(
-    public items: IOrderItem[],
-    public amountPaid: number,
-    public completedAt: Date
-  ) {}
+  constructor(public items: IOrderItem[], public amountPaid: number, public completedAt: Date) {}
 
   accept(visitor: IOrderVisitor): IOrder {
     return visitor.visitCompleted(this);

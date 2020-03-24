@@ -20,11 +20,11 @@ export class OrderItem implements IOrderItem {
 }
 
 export class EmptyOrder implements IOrder {
-  items = [];
+  items: IOrderItem[] = [];
   amountPaid = 0;
   amountRefunded = 0;
-  completedAt = null;
-  
+  completedAt: Date = null;
+
   addItem(item: IOrderItem): IOrder {
     return new ActiveOrder([item]);
   }
@@ -49,8 +49,8 @@ export class EmptyOrder implements IOrder {
 export class ActiveOrder implements IOrder {
   amountPaid = 0;
   amountRefunded = 0;
-  completedAt = null;
-  
+  completedAt: Date = null;
+
   constructor(public items: IOrderItem[]) {}
 
   addItem(item: IOrderItem): IOrder {
@@ -78,8 +78,8 @@ export class ActiveOrder implements IOrder {
 
 export class PaidOrder implements IOrder {
   amountRefunded = 0;
-  completedAt = null;
-  
+  completedAt: Date = null;
+
   constructor(public items: IOrderItem[], public amountPaid: number) {}
 
   addItem(item: IOrderItem): IOrder {
@@ -106,11 +106,7 @@ export class PaidOrder implements IOrder {
 export class CompletedOrder implements IOrder {
   amountRefunded = 0;
 
-  constructor(
-    public items: IOrderItem[],
-    public amountPaid: number,
-    public completedAt: Date
-  ) {}
+  constructor(public items: IOrderItem[], public amountPaid: number, public completedAt: Date) {}
 
   addItem(item: IOrderItem): IOrder {
     return this;
@@ -134,8 +130,8 @@ export class CompletedOrder implements IOrder {
 }
 
 export class RefundedOrder implements IOrder {
-  completedAt = null;
-  
+  completedAt: Date = null;
+
   constructor(
     public items: IOrderItem[],
     public amountPaid: number,

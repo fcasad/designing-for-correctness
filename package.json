@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "build": "tsc",
+    "build:watch": "npm run build -- --watch",
     "start": "node ./dist/client"
   },
   "keywords": [],
