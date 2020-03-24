@@ -6,7 +6,8 @@
   "scripts": {
     "build": "tsc",
     "build:watch": "npm run build -- --watch",
-    "start": "node ./dist/client"
+    "start": "node ./dist/client",
+    "test": "npx jest --watch"
   },
   "keywords": [],
   "author": "",
@@ -15,6 +16,9 @@
     "fp-ts": "^2.5.3"
   },
   "devDependencies": {
+    "@types/jest": "^25.1.4",
+    "jest": "^25.1.0",
+    "ts-jest": "^25.2.1",
     "typescript": "^3.8.3"
   }
 }
