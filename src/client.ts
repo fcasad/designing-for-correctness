@@ -17,50 +17,50 @@ const testHappyPath_00 = () => {
     .complete();
 };
 
-// const testHappyPath_01 = () => {
-//   const { EmptyOrder, OrderItem } = oo_polymorphism;
+const testHappyPath_01 = () => {
+  const { EmptyOrder, OrderItem } = oo_polymorphism;
 
-//   return new EmptyOrder()
-//     .addItem(new OrderItem('a', 7))
-//     .addItem(new OrderItem('b', 3))
-//     .addItem(new OrderItem('c', 5))
-//     .removeItem('b')
-//     .pay(12)
-//     .complete();
-// };
+  return new EmptyOrder()
+    .addItem(new OrderItem('a', 7))
+    .addItem(new OrderItem('b', 3))
+    .addItem(new OrderItem('c', 5))
+    .removeItem('b')
+    .pay(12)
+    .complete();
+};
 
-// const testHappyPath_02 = () => {
-//   const {
-//     EmptyOrder,
-//     OrderItem,
-//     AddItemVisitor,
-//     RemoveItemVisitor,
-//     PayVisitor,
-//     CompleteVisitor
-//   } = oo_visitorPattern;
+const testHappyPath_02 = () => {
+  const {
+    EmptyOrder,
+    OrderItem,
+    AddItemVisitor,
+    RemoveItemVisitor,
+    PayVisitor,
+    CompleteVisitor
+  } = oo_visitorPattern;
 
-//   return new EmptyOrder()
-//     .accept(new AddItemVisitor(new OrderItem('a', 7)))
-//     .accept(new AddItemVisitor(new OrderItem('b', 3)))
-//     .accept(new AddItemVisitor(new OrderItem('c', 5)))
-//     .accept(new RemoveItemVisitor('b'))
-//     .accept(new PayVisitor(12))
-//     .accept(new CompleteVisitor());
-// };
+  return new EmptyOrder()
+    .accept(new AddItemVisitor(new OrderItem('a', 7)))
+    .accept(new AddItemVisitor(new OrderItem('b', 3)))
+    .accept(new AddItemVisitor(new OrderItem('c', 5)))
+    .accept(new RemoveItemVisitor('b'))
+    .accept(new PayVisitor(12))
+    .accept(new CompleteVisitor());
+};
 
-// const testHappyPath_03 = () => {
-//   const { createOrder, addItem, removeItem, pay, complete } = fp_algebraicTypes;
+const testHappyPath_03 = () => {
+  const { createOrder, addItem, removeItem, pay, complete } = fp_algebraicTypes;
 
-//   return pipe(
-//     createOrder,
-//     addItem({ id: 'a', price: 7 }),
-//     addItem({ id: 'b', price: 3 }),
-//     addItem({ id: 'c', price: 5 }),
-//     removeItem('b'),
-//     pay(12),
-//     complete
-//   )();
-// };
+  return pipe(
+    createOrder,
+    addItem({ id: 'a', price: 7 }),
+    addItem({ id: 'b', price: 3 }),
+    addItem({ id: 'c', price: 5 }),
+    removeItem('b'),
+    pay(12),
+    complete
+  )();
+};
 
 const main = () => {
   try {
