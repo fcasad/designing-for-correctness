@@ -1,0 +1,19 @@
+{
+  "name": "designing-for-correctness",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build": "tsc",
+    "start": "node ./dist/client"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "fp-ts": "^2.5.3"
+  },
+  "devDependencies": {
+    "typescript": "^3.8.3"
+  }
+}
