@@ -5,13 +5,15 @@ export interface IOrderItem {
 
 export interface IOrder {
   items: IOrderItem[];
+  isPaid: boolean;
   amountPaid: number;
+  isRefunded: boolean;
   amountRefunded: number;
   completedAt: Date;
   addItem(item: IOrderItem): IOrder;
   removeItem(itemId: string): IOrder;
-  pay(amount: number): IOrder;
-  refund(amount: number): IOrder;
+  pay(): IOrder;
+  refund(): IOrder;
   complete(): IOrder;
 }
 
@@ -20,26 +22,50 @@ export class OrderItem implements IOrderItem {
 }
 
 export class Order implements IOrder {
-  items: IOrderItem[] = [];
-  amountPaid = 0;
-  amountRefunded = 0;
-  completedAt: Date = null;
+  private _items: IOrderItem[] = [];
   private _isPaid = false;
+  private _amountPaid = 0;
   private _isRefunded = false;
+  private _amountRefunded = 0;
+  private _completedAt: Date = null;
 
   private get _isEmpty() {
-    return this.items.length === 0;
+    return this._items.length === 0;
   }
 
   private get _isCompleted() {
-    return this.completedAt !== null;
+    return this._completedAt !== null;
+  }
+
+  get items() {
+    return this._items.map(item => ({ ...item }));
+  }
+
+  get isPaid() {
+    return this._isPaid;
+  }
+
+  get amountPaid() {
+    return this._amountPaid;
+  }
+
+  get isRefunded() {
+    return this._isRefunded;
+  }
+
+  get amountRefunded() {
+    return this._amountRefunded;
+  }
+
+  get completedAt() {
+    return this._completedAt;
   }
 
   addItem(item: IOrderItem): IOrder {
     if (this._isPaid) {
       throw new Error('Cannot modify already paid order');
     }
-    this.items.push(item);
+    this._items.push(item);
     return this;
   }
 
@@ -47,26 +73,27 @@ export class Order implements IOrder {
     if (this._isPaid) {
       throw new Error('Cannot modify already paid order');
     }
-    const index = this.items.findIndex(item => item.id === itemId);
+    const index = this._items.findIndex(item => item.id === itemId);
     if (index !== -1) {
-      this.items.splice(index, 1);
+      this._items.splice(index, 1);
     }
     return this;
   }
 
-  pay(amount: number): IOrder {
+  pay(): IOrder {
     if (this._isEmpty) {
       throw new Error('Cannot pay for order with no order items');
     }
     if (this._isPaid) {
       throw new Error('Cannot pay for already paid order');
     }
-    this.amountPaid = amount;
+    const amountToPay = this._items.reduce((amount, item) => amount + item.price, 0);
+    this._amountPaid = amountToPay;
     this._isPaid = true;
     return this;
   }
 
-  refund(amount: number): IOrder {
+  refund(): IOrder {
     if (!this._isPaid) {
       throw new Error('Cannot refund unpaid order');
     }
@@ -76,7 +103,7 @@ export class Order implements IOrder {
     if (this._isCompleted) {
       throw new Error('Cannot refund completed order');
     }
-    this.amountRefunded = amount;
+    this._amountRefunded = this._amountPaid;
     this._isRefunded = true;
     return this;
   }
@@ -88,7 +115,7 @@ export class Order implements IOrder {
     if (this._isRefunded) {
       throw new Error('Cannot complete refunded order');
     }
-    this.completedAt = new Date();
+    this._completedAt = new Date(Date.now());
     return this;
   }
 }
