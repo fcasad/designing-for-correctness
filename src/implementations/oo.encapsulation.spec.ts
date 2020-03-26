@@ -1,4 +1,4 @@
-import { Order, OrderItem } from './imperative';
+import { Order, OrderItem } from './oo.encapsulation';
 
 describe('Order', () => {
   describe('constructor', () => {
@@ -256,6 +256,10 @@ describe('Order', () => {
 // * never -
 // * 6 refunded order must not be completed
 // * 7 therefore: completed order must not be refunded
+// * (implicit)
+// * 8. amount paid must never be negative
+// * 9. amount refunded must never be negative
+// * 10. amount refunded must never be greater than amount paid
 
 // * Additional data consistency concerns for our design with boolean flags:
 // * 0.1 order with payment amount must have paid flag set to true
