@@ -1,6 +1,6 @@
-import { flow as pipe } from 'fp-ts/lib/function';
+import { pipe } from 'fp-ts/lib/pipeable';
 
-import * as imperative from './implementations/imperative';
+import * as imperative from './implementations/oo.encapsulation';
 import * as oo_polymorphism from './implementations/oo.polymorphism';
 import * as oo_visitorPattern from './implementations/oo.visitorPattern';
 import * as fp_algebraicTypes from './implementations/fp.algebraicTypes';
@@ -13,7 +13,7 @@ const testHappyPath_00 = () => {
     .addItem(new OrderItem('b', 3))
     .addItem(new OrderItem('c', 5))
     .removeItem('b')
-    .pay(12)
+    .pay()
     .complete();
 };
 
@@ -52,14 +52,14 @@ const testHappyPath_03 = () => {
   const { createOrder, addItem, removeItem, pay, complete } = fp_algebraicTypes;
 
   return pipe(
-    createOrder,
+    createOrder(),
     addItem({ id: 'a', price: 7 }),
     addItem({ id: 'b', price: 3 }),
     addItem({ id: 'c', price: 5 }),
     removeItem('b'),
     pay(12),
     complete
-  )();
+  );
 };
 
 const main = () => {

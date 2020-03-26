@@ -1,15 +1,16 @@
 export interface IOrderItem {
-  id: string;
-  price: number;
+  readonly id: string;
+  readonly price: number;
 }
 
+// Abstraction -- we can swap out Order implementation in any code that depends on this interface
 export interface IOrder {
-  items: IOrderItem[];
-  isPaid: boolean;
-  amountPaid: number;
-  isRefunded: boolean;
-  amountRefunded: number;
-  completedAt: Date;
+  readonly items: ReadonlyArray<IOrderItem>;
+  readonly isPaid: boolean;
+  readonly amountPaid: number;
+  readonly isRefunded: boolean;
+  readonly amountRefunded: number;
+  readonly completedAt: Date;
   addItem(item: IOrderItem): IOrder;
   removeItem(itemId: string): IOrder;
   pay(): IOrder;
@@ -17,8 +18,18 @@ export interface IOrder {
   complete(): IOrder;
 }
 
+// Encapsulation -- the entire state of the order is hidden and only readable via getters,
+// and modifiable by public methods. we may need to use specific data types to enforce this (ie ReadonlyArray)
 export class OrderItem implements IOrderItem {
-  constructor(public id: string, public price: number) {}
+  constructor(private _id: string, private _price: number) {}
+
+  get id() {
+    return this._id;
+  }
+
+  get price() {
+    return this._price;
+  }
 }
 
 export class Order implements IOrder {
@@ -38,7 +49,7 @@ export class Order implements IOrder {
   }
 
   get items() {
-    return this._items.map(item => ({ ...item }));
+    return this._items;
   }
 
   get isPaid() {
@@ -87,8 +98,8 @@ export class Order implements IOrder {
     if (this._isPaid) {
       throw new Error('Cannot pay for already paid order');
     }
-    const amountToPay = this._items.reduce((amount, item) => amount + item.price, 0);
-    this._amountPaid = amountToPay;
+    const amount = this._items.reduce((amount, item) => amount + item.price, 0);
+    this._amountPaid = amount;
     this._isPaid = true;
     return this;
   }

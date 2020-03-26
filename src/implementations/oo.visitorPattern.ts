@@ -1,6 +1,19 @@
 export interface IOrderItem {
-  id: string;
-  price: number;
+  readonly id: string;
+  readonly price: number;
+}
+
+// Separation of data and behavior -- notice how each behavior is moved into it's own class
+// which explicitly specifies how to operate on each state.  Adding new behaviors is now
+// done in a single place without worry about interfering with existing ones
+// But this pattern causes extra boilerplate, indirection, and less clearly represents the domain
+// Ie what is a 'Visitor', can you 'accept' an order?
+export interface IOrder {
+  readonly items: ReadonlyArray<IOrderItem>;
+  readonly amountPaid: number;
+  readonly amountRefunded: number;
+  readonly completedAt: Date;
+  accept(visitor: IOrderVisitor): IOrder;
 }
 
 export interface IOrderVisitor {
@@ -11,17 +24,48 @@ export interface IOrderVisitor {
   visitCompleted(completed: CompletedOrder): IOrder;
 }
 
-export interface IOrder {
-  accept(visitor: IOrderVisitor): IOrder;
-}
-
 export class OrderItem implements IOrderItem {
-  constructor(public id: string, public price: number) {}
+  constructor(private _id: string, private _price: number) {}
+
+  get id() {
+    return this._id;
+  }
+
+  get price() {
+    return this._price;
+  }
 }
 
-export class EmptyOrder implements IOrder {
-  addItem(item: IOrderItem): IOrder {
-    return new ActiveOrder([item]);
+abstract class BaseOrder implements IOrder {
+  get items() {
+    return this._items;
+  }
+
+  get amountPaid() {
+    return this._amountPaid;
+  }
+
+  get amountRefunded() {
+    return this._amountRefunded;
+  }
+
+  get completedAt() {
+    return this._completedAt;
+  }
+
+  constructor(
+    protected _items: IOrderItem[] = [],
+    protected _amountPaid = 0,
+    protected _amountRefunded = 0,
+    protected _completedAt: Date = null
+  ) {}
+
+  abstract accept(visitor: IOrderVisitor): IOrder;
+}
+
+export class EmptyOrder extends BaseOrder {
+  constructor() {
+    super();
   }
 
   accept(visitor: IOrderVisitor): IOrder {
@@ -29,21 +73,9 @@ export class EmptyOrder implements IOrder {
   }
 }
 
-export class ActiveOrder implements IOrder {
-  constructor(public items: IOrderItem[]) {}
-
-  addItem(item: IOrderItem): IOrder {
-    const newItems = this.items.concat(item);
-    return new ActiveOrder(newItems);
-  }
-
-  removeItem(itemId: string): IOrder {
-    const newItems = this.items.filter(item => item.id !== itemId);
-    return newItems.length > 0 ? new ActiveOrder(newItems) : new EmptyOrder();
-  }
-
-  pay(amount: number): IOrder {
-    return new PaidOrder(this.items, amount);
+export class ActiveOrder extends BaseOrder {
+  constructor(items: IOrderItem[]) {
+    super(items);
   }
 
   accept(visitor: IOrderVisitor): IOrder {
@@ -51,15 +83,9 @@ export class ActiveOrder implements IOrder {
   }
 }
 
-export class PaidOrder implements IOrder {
-  constructor(public items: IOrderItem[], public amountPaid: number) {}
-
-  refund(amount: number): IOrder {
-    return new RefundedOrder(this.items, this.amountPaid, amount);
-  }
-
-  complete(): IOrder {
-    return new CompletedOrder(this.items, this.amountPaid, new Date());
+export class PaidOrder extends BaseOrder {
+  constructor(items: IOrderItem[], amountPaid: number) {
+    super(items, amountPaid);
   }
 
   accept(visitor: IOrderVisitor): IOrder {
@@ -67,20 +93,20 @@ export class PaidOrder implements IOrder {
   }
 }
 
-export class CompletedOrder implements IOrder {
-  constructor(public items: IOrderItem[], public amountPaid: number, public completedAt: Date) {}
+export class CompletedOrder extends BaseOrder {
+  constructor(items: IOrderItem[], amountPaid: number, completedAt: Date) {
+    super(items, amountPaid, undefined, completedAt);
+  }
 
   accept(visitor: IOrderVisitor): IOrder {
     return visitor.visitCompleted(this);
   }
 }
 
-export class RefundedOrder implements IOrder {
-  constructor(
-    public items: IOrderItem[],
-    public amountPaid: number,
-    public amountRefunded: number
-  ) {}
+export class RefundedOrder extends BaseOrder {
+  constructor(items: IOrderItem[], amountPaid: number, amountRefunded: number) {
+    super(items, amountPaid, amountRefunded);
+  }
 
   accept(visitor: IOrderVisitor): IOrder {
     return visitor.visitRefunded(this);
@@ -88,116 +114,124 @@ export class RefundedOrder implements IOrder {
 }
 
 export class AddItemVisitor implements IOrderVisitor {
-  constructor(public item: IOrderItem) {}
+  constructor(private _item: IOrderItem) {}
+
+  get item() {
+    return this._item;
+  }
 
   visitEmpty(empty: EmptyOrder): IOrder {
-    return empty.addItem(this.item);
+    return new ActiveOrder([this.item]);
   }
 
   visitActive(active: ActiveOrder): IOrder {
-    return active.addItem(this.item);
+    const newItems = active.items.concat(this.item);
+    return new ActiveOrder(newItems);
   }
 
   visitPaid(paid: PaidOrder): IOrder {
-    return paid;
+    throw new Error('Cannot modify already paid order');
   }
 
   visitRefunded(refunded: RefundedOrder): IOrder {
-    return refunded;
+    throw new Error('Cannot modify already paid order');
   }
 
   visitCompleted(completed: CompletedOrder): IOrder {
-    return completed;
+    throw new Error('Cannot modify already paid order');
   }
 }
 
 export class RemoveItemVisitor implements IOrderVisitor {
-  constructor(public itemId: string) {}
+  constructor(private _itemId: string) {}
+
+  get itemId() {
+    return this._itemId;
+  }
 
   visitEmpty(empty: EmptyOrder): IOrder {
     return empty;
   }
 
   visitActive(active: ActiveOrder): IOrder {
-    return active.removeItem(this.itemId);
+    const newItems = active.items.filter(item => item.id !== this.itemId);
+    return newItems.length > 0 ? new ActiveOrder(newItems) : new EmptyOrder();
   }
 
   visitPaid(paid: PaidOrder): IOrder {
-    return paid;
+    throw new Error('Cannot modify already paid order');
   }
 
   visitRefunded(refunded: RefundedOrder): IOrder {
-    return refunded;
+    throw new Error('Cannot modify already paid order');
   }
 
   visitCompleted(completed: CompletedOrder): IOrder {
-    return completed;
+    throw new Error('Cannot modify already paid order');
   }
 }
 
 export class PayVisitor implements IOrderVisitor {
-  constructor(public amount: number) {}
-
   visitEmpty(empty: EmptyOrder): IOrder {
-    return empty;
+    throw new Error('Cannot pay for order with no order items');
   }
 
   visitActive(active: ActiveOrder): IOrder {
-    return active.pay(this.amount);
+    const amount = active.items.reduce((amount, item) => amount + item.price, 0);
+    return new PaidOrder(active.items.slice(), amount);
   }
 
   visitPaid(paid: PaidOrder): IOrder {
-    return paid;
+    throw new Error('Cannot pay for already paid order');
   }
 
   visitRefunded(refunded: RefundedOrder): IOrder {
-    return refunded;
+    throw new Error('Cannot pay for already paid order');
   }
 
   visitCompleted(completed: CompletedOrder): IOrder {
-    return completed;
+    throw new Error('Cannot pay for already paid order');
   }
 }
 
 export class RefundVisitor implements IOrderVisitor {
-  constructor(public amount: number) {}
-
   visitEmpty(empty: EmptyOrder): IOrder {
-    return empty;
+    throw new Error('Cannot refund unpaid order');
   }
 
   visitActive(active: ActiveOrder): IOrder {
-    return active;
+    throw new Error('Cannot refund unpaid order');
   }
 
   visitPaid(paid: PaidOrder): IOrder {
-    return paid.refund(this.amount);
+    const amountRefunded = paid.amountPaid;
+    return new RefundedOrder(paid.items.slice(), paid.amountPaid, amountRefunded);
   }
 
   visitRefunded(refunded: RefundedOrder): IOrder {
-    return refunded;
+    throw new Error('Cannot refund already refunded order');
   }
 
   visitCompleted(completed: CompletedOrder): IOrder {
-    return completed;
+    throw new Error('Cannot refund completed order');
   }
 }
 
 export class CompleteVisitor implements IOrderVisitor {
   visitEmpty(empty: EmptyOrder): IOrder {
-    return empty;
+    throw new Error('Cannot complete unpaid order');
   }
 
   visitActive(active: ActiveOrder): IOrder {
-    return active;
+    throw new Error('Cannot complete unpaid order');
   }
 
   visitPaid(paid: PaidOrder): IOrder {
-    return paid.complete();
+    return new CompletedOrder(paid.items.slice(), paid.amountPaid, new Date(Date.now()));
   }
 
   visitRefunded(refunded: RefundedOrder): IOrder {
-    return refunded;
+    throw new Error('Cannot complete refunded order');
   }
 
   visitCompleted(completed: CompletedOrder): IOrder {
