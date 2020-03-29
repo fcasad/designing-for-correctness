@@ -15,7 +15,7 @@ import {
   PaidOrder,
   RefundedOrder,
   CompletedOrder
-} from './fp.algebraicTypes';
+} from './05-fp.pure';
 
 // utils
 const NULL = (): null => null;
@@ -67,7 +67,7 @@ describe('addItem', () => {
       const result = pipe(paidOrderFixture, addItem(itemC));
 
       expect(isLeft(result)).toBe(true);
-      expect(getLeft(result)).toBe('TODO--error msg');
+      expect(getLeft(result)).toBe('Cannot modify already paid order');
     });
   });
 
@@ -76,7 +76,7 @@ describe('addItem', () => {
       const result = pipe(completedOrderFixture, addItem(itemC));
 
       expect(isLeft(result)).toBe(true);
-      expect(getLeft(result)).toBe('TODO--error msg');
+      expect(getLeft(result)).toBe('Cannot modify already paid order');
     });
   });
 
@@ -85,7 +85,7 @@ describe('addItem', () => {
       const result = pipe(refundedOrderFixture, addItem(itemC));
 
       expect(isLeft(result)).toBe(true);
-      expect(getLeft(result)).toBe('TODO--error msg');
+      expect(getLeft(result)).toBe('Cannot modify already paid order');
     });
   });
 });
@@ -121,7 +121,7 @@ describe('removeItem', () => {
       const result = pipe(paidOrderFixture, removeItem(itemA.id));
 
       expect(isLeft(result)).toBe(true);
-      expect(getLeft(result)).toBe('TODO--error msg');
+      expect(getLeft(result)).toBe('Cannot modify already paid order');
     });
   });
 
@@ -130,7 +130,7 @@ describe('removeItem', () => {
       const result = pipe(completedOrderFixture, removeItem(itemA.id));
 
       expect(isLeft(result)).toBe(true);
-      expect(getLeft(result)).toBe('TODO--error msg');
+      expect(getLeft(result)).toBe('Cannot modify already paid order');
     });
   });
 
@@ -139,7 +139,7 @@ describe('removeItem', () => {
       const result = pipe(refundedOrderFixture, removeItem(itemA.id));
 
       expect(isLeft(result)).toBe(true);
-      expect(getLeft(result)).toBe('TODO--error msg');
+      expect(getLeft(result)).toBe('Cannot modify already paid order');
     });
   });
 });

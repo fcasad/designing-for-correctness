@@ -1,9 +1,9 @@
 import { pipe } from 'fp-ts/lib/pipeable';
 
-import * as imperative from './implementations/oo.encapsulation';
-import * as oo_polymorphism from './implementations/oo.polymorphism';
-import * as oo_visitorPattern from './implementations/oo.visitorPattern';
-import * as fp_algebraicTypes from './implementations/fp.algebraicTypes';
+import * as imperative from './implementations/01-oo.encapsulation';
+import * as oo_polymorphism from './implementations/02-oo.polymorphism';
+import * as oo_visitorPattern from './implementations/03-oo.visitorPattern';
+import * as fp_unionType from './implementations/04-fp.unionType';
 
 const testHappyPath_00 = () => {
   const { Order, OrderItem } = imperative;
@@ -25,7 +25,7 @@ const testHappyPath_01 = () => {
     .addItem(new OrderItem('b', 3))
     .addItem(new OrderItem('c', 5))
     .removeItem('b')
-    .pay(12)
+    .pay()
     .complete();
 };
 
@@ -44,20 +44,20 @@ const testHappyPath_02 = () => {
     .accept(new AddItemVisitor(new OrderItem('b', 3)))
     .accept(new AddItemVisitor(new OrderItem('c', 5)))
     .accept(new RemoveItemVisitor('b'))
-    .accept(new PayVisitor(12))
+    .accept(new PayVisitor())
     .accept(new CompleteVisitor());
 };
 
 const testHappyPath_03 = () => {
-  const { createOrder, addItem, removeItem, pay, complete } = fp_algebraicTypes;
+  const { emptyOrder, addItem, removeItem, pay, complete } = fp_unionType;
 
   return pipe(
-    createOrder(),
+    emptyOrder,
     addItem({ id: 'a', price: 7 }),
     addItem({ id: 'b', price: 3 }),
     addItem({ id: 'c', price: 5 }),
     removeItem('b'),
-    pay(12),
+    pay,
     complete
   );
 };

@@ -1,4 +1,4 @@
-import { Order, OrderItem } from './oo.encapsulation';
+import { Order, OrderItem } from './01-oo.encapsulation';
 
 describe('Order', () => {
   describe('constructor', () => {
@@ -232,38 +232,10 @@ describe('Order', () => {
   });
 });
 
-// Basic Functionality:
-// * create order
-// * add order item to order
-// * remove order item from order
-// * pay for order
-// * refund order
-// * complete order
-
-// Business Rules:
-// * cannot modify paid order
-// * cannot pay for order with no items, or already paid order
-// * can only refund paid orders, which are not already refunded or completed
-// * can only complete paid orders, which are not refunded
-
-// Properties / Invariants:
-// * always -
-// * 1 paid order must have items
-// * 2 refunded order must be paid
-// * 3 therefore: refunded order must have items
-// * 4 completed order must be paid
-// * 5 therefore: completed order must have items
-// * never -
-// * 6 refunded order must not be completed
-// * 7 therefore: completed order must not be refunded
-// * (implicit)
-// * 8. amount paid must never be negative
-// * 9. amount refunded must never be negative
-// * 10. amount refunded must never be greater than amount paid
-
-// * Additional data consistency concerns for our design with boolean flags:
-// * 0.1 order with payment amount must have paid flag set to true
-// * 0.2 order with refund amount must have refunded flag set to true
+// TODO: Consider explicitly adding invariants:
+// - amountPaid, amountRefunded should be non-negative
+// - amountRefunded if applicable should equal amountPaid
+// - completedAt should be date in past
 
 // const breaks_invariant_1 = {
 //   items: [],

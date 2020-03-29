@@ -33,7 +33,6 @@ export type RefundedOrder = Readonly<{
   amountRefunded: number;
 }>;
 
-// necessary since JS doesn't have pattern matching
 const assertUnreachable = (x: never): never => {
   throw new Error('Should not reach here');
 };
@@ -127,3 +126,12 @@ export const complete: Complete = order => {
   }
   assertUnreachable(order);
 };
+
+// Notes: This code solves 2 additional problems:
+// 1.  We said we want to make impossible states impossible.  Items cannot be empty so we've introduced
+//     a new type - ReadonlyNonEmptyArray. We can use a lib like here or create these ourselves.
+//     Creating additional value objects would help enforce price, amount paid etc are _non negative_ numbers
+//     or other invariants.  This can be done in the OO implementations as well.
+// 2.  All of our previous examples were not fully type-safe since we were throwing exceptions.  Now the
+//     exception handling is wrapped in another type (Either monad).  This just encapsulates the possibility
+//     of success or failure (right or left)

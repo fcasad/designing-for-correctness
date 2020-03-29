@@ -3,7 +3,6 @@ export interface IOrderItem {
   readonly price: number;
 }
 
-// Abstraction -- we can swap out Order implementation in any code that depends on this interface
 export interface IOrder {
   readonly items: ReadonlyArray<IOrderItem>;
   readonly isPaid: boolean;
@@ -18,8 +17,6 @@ export interface IOrder {
   complete(): IOrder;
 }
 
-// Encapsulation -- the entire state of the order is hidden and only readable via getters,
-// and modifiable by public methods. we may need to use specific data types to enforce this (ie ReadonlyArray)
 export class OrderItem implements IOrderItem {
   constructor(private _id: string, private _price: number) {}
 
@@ -130,3 +127,13 @@ export class Order implements IOrder {
     return this;
   }
 }
+
+// Notes:
+// - Abstraction: we can swap out Order implementation in any code that depends on IOrder interface
+// - Encapsulation: the entire state of the order is hidden and only readable via getters,
+//     and modifiable by public methods. we may need to use specific data types to enforce this (ie ReadonlyArray)
+//     but this is critical to ensure the invariants of the order
+// - Our code has a lot of implicit state however... this and the branching logic can easily get out of control
+// - There are additional data consistency concerns for our design with boolean flags:
+//   -- order with payment amount must have paid flag set to true
+//   -- order with refund amount must have refunded flag set to true

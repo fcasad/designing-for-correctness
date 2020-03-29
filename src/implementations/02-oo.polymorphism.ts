@@ -3,7 +3,6 @@ export interface IOrderItem {
   readonly price: number;
 }
 
-// Abstraction -- Our abstraction is more generic without the boolean flags
 export interface IOrder {
   readonly items: ReadonlyArray<IOrderItem>;
   readonly amountPaid: number;
@@ -28,8 +27,6 @@ export class OrderItem implements IOrderItem {
   }
 }
 
-// Inheritence -- we do not want to introduce a deep inheritance heirarchy
-// but sparing usage like the abstract class here allows us to share common data, behavior
 abstract class BaseOrder implements IOrder {
   get items() {
     return this._items;
@@ -65,8 +62,6 @@ abstract class BaseOrder implements IOrder {
   abstract complete(): IOrder;
 }
 
-// Polymorphism -- by implementing multiple classes which override the behavior (methods) of their base class,
-// specialization has occurred, which eliminates much of the branching logic. the flow of the program is much easier to reason about as a result
 export class EmptyOrder extends BaseOrder {
   constructor() {
     super();
@@ -93,7 +88,6 @@ export class EmptyOrder extends BaseOrder {
   }
 }
 
-// Also notice we have identified that our Order can be in several different states and have represented that explicitly with the type system rather than boolean flags
 export class ActiveOrder extends BaseOrder {
   constructor(items: IOrderItem[]) {
     super(items);
@@ -201,3 +195,12 @@ export class RefundedOrder extends BaseOrder {
     throw new Error('Cannot complete refunded order');
   }
 }
+
+// Notes:
+// - Inheritance: we do not want to introduce a deep inheritance hierarchy
+//   but sparing usage like the abstract class here allows us to share common data, behavior
+// - Polymorphism: by implementing multiple classes which override the behavior (methods) of their base class,
+//   specialization has occurred, which eliminates much of the branching logic.
+//   The flow of the program is much easier to reason about as a result
+// - Also notice we have identified that our Order can be in several different states and have represented that explicitly
+//   with the type system rather than boolean flags. This greatly helps ensure correctness, and mitigate state explosion

@@ -3,11 +3,6 @@ export interface IOrderItem {
   readonly price: number;
 }
 
-// Separation of data and behavior -- notice how each behavior is moved into it's own class
-// which explicitly specifies how to operate on each state.  Adding new behaviors is now
-// done in a single place without worry about interfering with existing ones
-// But this pattern causes extra boilerplate, indirection, and less clearly represents the domain
-// Ie what is a 'Visitor', can you 'accept' an order?
 export interface IOrder {
   readonly items: ReadonlyArray<IOrderItem>;
   readonly amountPaid: number;
@@ -238,3 +233,9 @@ export class CompleteVisitor implements IOrderVisitor {
     return completed;
   }
 }
+
+// Notes: separation of data and behavior -- notice how each behavior is moved into it's own class
+// which explicitly specifies how to operate on each state.  Adding new behaviors is now
+// done in a single place without worry about interfering with existing behaviors
+// But this pattern causes extra boilerplate, indirection, and less clearly represents the domain
+// Ie what is a 'Visitor', can you 'accept' an order?
