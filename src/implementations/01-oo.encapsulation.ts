@@ -134,6 +134,6 @@ export class Order implements IOrder {
 //     and modifiable by public methods. we may need to use specific data types to enforce this (ie ReadonlyArray)
 //     but this is critical to ensure the invariants of the order
 // - Our code has a lot of implicit state however... this and the branching logic can easily get out of control
-// - There are additional data consistency concerns for our design with boolean flags:
+// - There are additional data consistency concerns for our design with boolean flags (these need to stay in sync):
 //   -- order with payment amount must have paid flag set to true
 //   -- order with refund amount must have refunded flag set to true

@@ -234,8 +234,10 @@ export class CompleteVisitor implements IOrderVisitor {
   }
 }
 
-// Notes: separation of data and behavior -- notice how each behavior is moved into it's own class
-// which explicitly specifies how to operate on each state.  Adding new behaviors is now
-// done in a single place without worry about interfering with existing behaviors
-// But this pattern causes extra boilerplate, indirection, and less clearly represents the domain
-// Ie what is a 'Visitor', can you 'accept' an order?
+// Notes: 
+// - Unlike with the polymorphic implementation, each subtype of order only has the data associated with that state
+// - Separation of data and behavior: notice how each behavior is moved into it's own class
+//   which explicitly specifies how to operate on each state.  Adding new behaviors is now
+//   done in a single place without worry about interfering with existing behaviors.
+// - This pattern causes extra boilerplate, indirection, and less clearly represents the domain
+//   Ie what is a 'Visitor', can you 'accept' an order?
