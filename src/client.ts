@@ -1,12 +1,12 @@
 import { pipe } from 'fp-ts/lib/pipeable';
 
-import * as imperative from './implementations/01-oo.encapsulation';
+import * as encapsulation from './implementations/01-oo.encapsulation';
 import * as oo_polymorphism from './implementations/02-oo.polymorphism';
 import * as oo_visitorPattern from './implementations/03-oo.visitorPattern';
 import * as fp_unionType from './implementations/04-fp.unionType';
 
-const testHappyPath_00 = () => {
-  const { Order, OrderItem } = imperative;
+const testHappyPath_01 = () => {
+  const { Order, OrderItem } = encapsulation;
 
   return new Order()
     .addItem(new OrderItem('a', 7))
@@ -17,7 +17,7 @@ const testHappyPath_00 = () => {
     .complete();
 };
 
-const testHappyPath_01 = () => {
+const testHappyPath_02 = () => {
   const { EmptyOrder, OrderItem } = oo_polymorphism;
 
   return new EmptyOrder()
@@ -29,7 +29,7 @@ const testHappyPath_01 = () => {
     .complete();
 };
 
-const testHappyPath_02 = () => {
+const testHappyPath_03 = () => {
   const {
     EmptyOrder,
     OrderItem,
@@ -48,7 +48,7 @@ const testHappyPath_02 = () => {
     .accept(new CompleteVisitor());
 };
 
-const testHappyPath_03 = () => {
+const testHappyPath_04 = () => {
   const { emptyOrder, addItem, removeItem, pay, complete } = fp_unionType;
 
   return pipe(
@@ -64,7 +64,7 @@ const testHappyPath_03 = () => {
 
 const main = () => {
   try {
-    const result = testHappyPath_00();
+    const result = testHappyPath_01();
     console.log(result);
   } catch (err) {
     console.log(err.message);
