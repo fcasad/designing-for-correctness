@@ -129,7 +129,6 @@ export class Order implements IOrder {
 }
 
 // Notes:
-// - Abstraction: we can swap out Order implementation in any code that depends on IOrder interface
 // - Encapsulation: the entire state of the order is hidden and only readable via getters,
 //     and modifiable by public methods. we may need to use specific data types to enforce this (ie ReadonlyArray)
 //     but this is critical to ensure the invariants of the order
