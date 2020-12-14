@@ -1,4 +1,4 @@
-# designing-for-correctness-ts
+# designing-for-correctness
 
 ### WIP
 
